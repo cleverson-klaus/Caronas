@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Viagens - UniCarona</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        /* Container Principal */
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Abas de Navegação */
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            font-weight: 600;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #2a5298;
+            border-bottom-color: #2a5298;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #2a5298;
+            background-color: transparent;
+            border-bottom-color: #2a5298;
+        }
+
+        /* Cards de Viagem */
+        .trip-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid #e9ecef;
+        }
+
+        .trip-card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .trip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .trip-date-time {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .trip-date-time i {
+            color: #2a5298;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .trip-route {
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #2a5298;
+        }
+
+        .route-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .route-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .route-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .route-icon-start {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .route-icon-end {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .route-text {
+            flex: 1;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .trip-participant {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .trip-participant i {
+            color: #2a5298;
+        }
+
+        .trip-actions {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-details {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+        }
+
+        .btn-details:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+            color: white;
+        }
+
+        .btn-rate {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+        }
+
+        .btn-rate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            color: white;
+        }
+
+        /* Mensagem quando não há viagens */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Esconder conteúdo das abas inativas */
+        .tab-content > .tab-pane {
+            display: none;
+        }
+
+        .tab-content > .tab-pane.active {
+            display: block;
+        }
+
+        @media (max-width: 576px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .trip-header {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <button class="back-button" onclick="goBack()" title="Voltar">
+            <i class="bi bi-arrow-left"></i>
+        </button>
+        <h1 class="page-title">Minhas Viagens</h1>
+    </header>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Abas de Navegação -->
+        <ul class="nav nav-tabs" id="tripTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" 
+                        data-bs-target="#upcoming" type="button" role="tab" 
+                        aria-controls="upcoming" aria-selected="true">
+                    <i class="bi bi-calendar-event"></i> Próximas Viagens
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="history-tab" data-bs-toggle="tab" 
+                        data-bs-target="#history" type="button" role="tab" 
+                        aria-controls="history" aria-selected="false">
+                    <i class="bi bi-clock-history"></i> Histórico
+                </button>
+            </li>
+        </ul>
+
+        <!-- Conteúdo das Abas -->
+        <div class="tab-content" id="tripTabsContent">
+            <!-- Aba: Próximas Viagens -->
+            <div class="tab-pane fade show active" id="upcoming" role="tabpanel" 
+                 aria-labelledby="upcoming-tab">
+                
+                <!-- Card de Viagem 1 -->
+                <div class="trip-card">
+                    <div class="trip-header">
+                        <div class="trip-date-time">
+                            <i class="bi bi-calendar3"></i>
+                            <span>25/10 às 18:30</span>
+                        </div>
+                        <span class="status-badge status-confirmed">Confirmada</span>
+                    </div>
+                    
+                    <div class="trip-route">
+                        <div class="route-item">
+                            <div class="route-icon route-icon-start">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="route-text">Bairro Centro</div>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-icon route-icon-end">
+                                <i class="bi bi-flag-fill"></i>
+                            </div>
+                            <div class="route-text">Campus Universitário - Bloco A</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-participant">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Motorista: Bruno Silva</span>
+                    </div>
+
+                    <div class="trip-actions">
+                        <button class="btn btn-action btn-details" onclick="viewDetails('upcoming', 1)">
+                            <i class="bi bi-chat-dots-fill"></i> Ver Detalhes / Chat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Viagem 2 -->
+                <div class="trip-card">
+                    <div class="trip-header">
+                        <div class="trip-date-time">
+                            <i class="bi bi-calendar3"></i>
+                            <span>28/10 às 07:15</span>
+                        </div>
+                        <span class="status-badge status-pending">Pendente</span>
+                    </div>
+                    
+                    <div class="trip-route">
+                        <div class="route-item">
+                            <div class="route-icon route-icon-start">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="route-text">Rua das Flores, 123</div>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-icon route-icon-end">
+                                <i class="bi bi-flag-fill"></i>
+                            </div>
+                            <div class="route-text">Campus Universitário - Bloco B</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-participant">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Passageiro: Ana Costa</span>
+                    </div>
+
+                    <div class="trip-actions">
+                        <button class="btn btn-action btn-details" onclick="viewDetails('upcoming', 2)">
+                            <i class="bi bi-chat-dots-fill"></i> Ver Detalhes / Chat
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Viagem 3 -->
+                <div class="trip-card">
+                    <div class="trip-header">
+                        <div class="trip-date-time">
+                            <i class="bi bi-calendar3"></i>
+                            <span>30/10 às 16:00</span>
+                        </div>
+                        <span class="status-badge status-confirmed">Confirmada</span>
+                    </div>
+                    
+                    <div class="trip-route">
+                        <div class="route-item">
+                            <div class="route-icon route-icon-start">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="route-text">Campus Universitário - Bloco A</div>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-icon route-icon-end">
+                                <i class="bi bi-flag-fill"></i>
+                            </div>
+                            <div class="route-text">Shopping Center</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-participant">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Motorista: Carlos Mendes</span>
+                    </div>
+
+                    <div class="trip-actions">
+                        <button class="btn btn-action btn-details" onclick="viewDetails('upcoming', 3)">
+                            <i class="bi bi-chat-dots-fill"></i> Ver Detalhes / Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Histórico -->
+            <div class="tab-pane fade" id="history" role="tabpanel" 
+                 aria-labelledby="history-tab">
+                
+                <!-- Card de Viagem 1 (Histórico) -->
+                <div class="trip-card">
+                    <div class="trip-header">
+                        <div class="trip-date-time">
+                            <i class="bi bi-calendar3"></i>
+                            <span>20/10 às 18:00</span>
+                        </div>
+                        <span class="status-badge status-completed">Concluída</span>
+                    </div>
+                    
+                    <div class="trip-route">
+                        <div class="route-item">
+                            <div class="route-icon route-icon-start">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="route-text">Bairro Jardim das Acácias</div>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-icon route-icon-end">
+                                <i class="bi bi-flag-fill"></i>
+                            </div>
+                            <div class="route-text">Campus Universitário - Bloco C</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-participant">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Motorista: Maria Santos</span>
+                    </div>
+
+                    <div class="trip-actions">
+                        <button class="btn btn-action btn-rate" onclick="rateTrip(1)">
+                            <i class="bi bi-star-fill"></i> Avaliar Viagem
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Viagem 2 (Histórico) -->
+                <div class="trip-card">
+                    <div class="trip-header">
+                        <div class="trip-date-time">
+                            <i class="bi bi-calendar3"></i>
+                            <span>18/10 às 07:30</span>
+                        </div>
+                        <span class="status-badge status-completed">Concluída</span>
+                    </div>
+                    
+                    <div class="trip-route">
+                        <div class="route-item">
+                            <div class="route-icon route-icon-start">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="route-text">Campus Universitário - Bloco A</div>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-icon route-icon-end">
+                                <i class="bi bi-flag-fill"></i>
+                            </div>
+                            <div class="route-text">Terminal Rodoviário</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-participant">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Passageiro: João Oliveira</span>
+                    </div>
+
+                    <div class="trip-actions">
+                        <button class="btn btn-action btn-rate" onclick="rateTrip(2)">
+                            <i class="bi bi-star-fill"></i> Avaliar Viagem
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Viagem 3 (Histórico) -->
+                <div class="trip-card">
+                    <div class="trip-header">
+                        <div class="trip-date-time">
+                            <i class="bi bi-calendar3"></i>
+                            <span>15/10 às 14:00</span>
+                        </div>
+                        <span class="status-badge status-completed">Concluída</span>
+                    </div>
+                    
+                    <div class="trip-route">
+                        <div class="route-item">
+                            <div class="route-icon route-icon-start">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="route-text">Rua Principal, 456</div>
+                        </div>
+                        <div class="route-item">
+                            <div class="route-icon route-icon-end">
+                                <i class="bi bi-flag-fill"></i>
+                            </div>
+                            <div class="route-text">Campus Universitário - Bloco B</div>
+                        </div>
+                    </div>
+
+                    <div class="trip-participant">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Motorista: Pedro Alves</span>
+                    </div>
+
+                    <div class="trip-actions">
+                        <button class="btn btn-action btn-rate" onclick="rateTrip(3)">
+                            <i class="bi bi-star-fill"></i> Avaliar Viagem
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Função para voltar
+        function goBack() {
+            // Aqui você pode redirecionar para a página anterior
+            // window.history.back();
+            // ou
+            // window.location.href = 'index.html';
+            console.log('Voltando...');
+            alert('Voltando para a tela anterior...');
+        }
+
+        // Função para ver detalhes da viagem
+        function viewDetails(type, tripId) {
+            console.log('Visualizando detalhes da viagem:', { type, tripId });
+            alert(`Abrindo detalhes e chat da viagem #${tripId}...`);
+            // Aqui você pode redirecionar para a página de detalhes
+            // window.location.href = `detalhes-viagem.html?id=${tripId}`;
+        }
+
+        // Função para avaliar viagem
+        function rateTrip(tripId) {
+            console.log('Avaliando viagem:', tripId);
+            alert(`Abrindo tela de avaliação da viagem #${tripId}...`);
+            // Aqui você pode redirecionar para a página de avaliação
+            // window.location.href = `avaliar-viagem.html?id=${tripId}`;
+        }
+
+        // Inicializar abas do Bootstrap
+        document.addEventListener('DOMContentLoaded', function() {
+            const triggerTabList = document.querySelectorAll('#tripTabs button[data-bs-toggle="tab"]');
+            triggerTabList.forEach(triggerEl => {
+                const tabTrigger = new bootstrap.Tab(triggerEl);
+                
+                triggerEl.addEventListener('click', event => {
+                    event.preventDefault();
+                    tabTrigger.show();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,643 @@
+<!DOCTYPE html> 
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCarona - Caronas para Estudantes</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+/* ============================================= */
+/* GERAL E ESTRUTURA SPA (TEMA DARK) */
+/* ============================================= */
+:root {
+    --sidebar-width: 80px; /* Largura da nossa nova sidebar */
+    --dark-bg: #121212;
+    --dark-bg-secondary: #1F1F1F;
+    --dark-border: #333;
+    --text-light: #E0E0E0;
+    --text-muted: #888;
+    --brand-blue: #004a91;
+    --brand-orange: #FF8C00;
+}
+
+body.dark-mode {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden; 
+}
+
+/* ============================================= */
+/* A NOVA SIDEBAR VERTICAL */
+/* ============================================= */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    background-color: var(--dark-bg-secondary);
+    border-right: 1px solid var(--dark-border);
+    display: flex;
+    flex-direction: column; /* Empilha os itens verticalmente */
+    align-items: center;
+    padding: 15px 0;
+    z-index: 2000; /* Mais alto que tudo */
+}
+
+.sidebar-logo {
+    color: var(--brand-blue);
+    font-size: 2rem;
+    margin-bottom: 25px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espaço entre os botões */
+}
+
+.sidebar .nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted); /* Cor inativa */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.70rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+.sidebar .nav-btn i {
+    font-size: 1.75rem;
+    margin-bottom: 4px;
+}
+.sidebar .nav-btn.active {
+    color: var(--brand-blue); /* Cor ativa */
+}
+.sidebar .nav-btn:hover {
+    color: white; /* Efeito hover */
+}
+
+/* O BOTÃO DE PÂNICO (DENTRO DA SIDEBAR) */
+.sos-button-sidebar {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 60px; /* Largura fixa */
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: auto; /* JOGA O BOTÃO PARA BAIXO */
+}
+.sos-button-sidebar i {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+.sos-button-sidebar:hover {
+    background-color: #c82333;
+}
+
+
+/* ============================================= */
+/* O CONTAINER DE CONTEÚDO */
+/* ============================================= */
+.content-container {
+    /* ESSA É A MÁGICA: Empurra todo o conteúdo para a direita
+       para não ficar debaixo da sidebar */
+    margin-left: var(--sidebar-width);
+}
+
+.page {
+    display: none;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Garante que o painel flutuante não seja afetado */
+        .action-panel {
+    /* Ajustamos o 'bottom' porque a navbar de baixo sumiu */
+    bottom: 20px; 
+    /* O resto do seu estilo .action-panel continua o mesmo */
+            position: absolute;
+            left: 10px;
+            right: 10px;
+            max-width: 500px; /* Limita a largura em telas grandes */
+            margin-left: auto;
+            margin-right: auto;
+            background-color: rgba(28, 28, 30, 0.85); /* Fundo escuro semi-transparente */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 1020;
+        }
+        .mode-toggle {
+            display: flex;
+            background-color: rgba(0, 0, 0, 0.3); /* Fundo das abas */
+            border-radius: 12px;
+            margin-bottom: 20px; /* Espaço abaixo das abas */
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .mode-toggle .nav-link {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            color: #AFAFAF; /* Texto da aba inativa */
+            border-radius: 9px;
+            padding: 10px 5px;
+            display: flex; /* Para alinhar ícone e texto */
+            align-items: center;
+            justify-content: center;
+            gap: 8px; /* Espaço entre ícone e texto */
+            border: none;
+            cursor: pointer;
+        }
+        .mode-toggle .nav-link.active {
+            background-color: #004a91; /* Azul na aba ativa */
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 74, 145, 0.5);
+        }
+
+        /* O FORMULÁRIO (CORRIGIDO) */
+        .action-panel .form-label {
+            color: #E0E0E0;
+            font-weight: 600;
+            margin-bottom: 0.5rem; /* <-- O ESPAÇO QUE FALTAVA */
+            display: block; /* Garante que ocupe a linha */
+        }
+        .action-panel .form-control {
+            background-color: #333; /* Fundo da caixa escuro */
+            border: 1px solid #555;
+            color: white; /* Texto digitado branco */
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1rem;
+        }
+        .action-panel .form-control::placeholder {
+            color: #888;
+        }
+        .action-panel .form-control:focus {
+            background-color: #333;
+            border-color: #004a91; /* Borda azul ao focar */
+            color: white;
+            box-shadow: 0 0 0 0.25rem rgba(0, 74, 145, 0.5);
+        }
+
+        /* BOTÃO DE "PUBLICAR ROTA" (LARANJA/AMARELO) */
+        .action-panel .btn-success {
+            background: linear-gradient(to right, #FF8C00, #FFA500); /* Laranja */
+            color: #121212; /* Texto escuro */
+            font-weight: 700;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .action-panel .btn-primary {
+            background-color: #004a91; /* Azul */
+            font-weight: 700;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        /* Garante que o fundo do mapa seja escuro */
+        .leaflet-container {
+            background: #222;
+        }
+
+        /* Ajusta os Popups do Leaflet para o nosso Dark Mode */
+        .leaflet-popup-content-wrapper {
+            background-color: #333;
+            color: #E0E0E0;
+        }
+        .leaflet-popup-content {
+            color: #E0E0E0;
+        }
+        .leaflet-popup-close-button {
+            color: #E0E0E0;
+        }
+        .leaflet-popup-tip {
+            background: #333;
+        }
+
+    </style>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body class="dark-mode">
+
+    <nav class="sidebar">
+        <a href="#" class="sidebar-logo" data-target="page-mapa">
+            <i class="bi bi-car-front-fill"></i>
+        </a>
+
+        <div class="sidebar-nav">
+            <button class="nav-btn active" data-target="page-mapa" title="Mapa">
+                <i class="bi bi-map-fill"></i>
+                <span>Mapa</span>
+            </button>
+            <button class="nav-btn" data-target="page-viagens" title="Caronas">
+                <i class="bi bi-list-stars"></i>
+                <span>Caronas</span>
+            </button>
+            <button class="nav-btn" data-target="page-chat" title="Chat">
+                <i class="bi bi-chat-dots-fill"></i>
+                <span>Chat</span>
+            </button>
+            <button class="nav-btn" data-target="page-login" title="Perfil"> <i class="bi bi-person-fill"></i>
+                <span>Perfil</span>
+            </button>
+        </div>
+
+        <button class="sos-button-sidebar" title="Botão do Pânico">
+            <i class="bi bi-shield-fill-exclamation"></i>
+            <span>SOS</span>
+        </button>
+    </nav>
+
+    <div class="content-container">
+
+        <main id="page-login" class="page vh-100">
+             </main>
+
+        <main id="page-cadastro" class="page">
+            </main>
+
+        <main id="page-mapa" class="page app-container">
+            <div class="map-placeholder" style="position: relative; flex-grow: 1;">
+                <div id="map" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0;"></div> 
+                <div class="action-panel">
+                    <!-- Abas de Navegação (Bootstrap 5) -->
+                    <nav class="mode-toggle" role="tablist">
+                        <button class="nav-link active" id="rider-tab" data-bs-toggle="tab" data-bs-target="#rider-panel" type="button" role="tab" aria-controls="rider-panel" aria-selected="true">
+                            <i class="bi bi-person-fill"></i> Pedir Carona
+                        </button>
+                        <button class="nav-link" id="driver-tab" data-bs-toggle="tab" data-bs-target="#driver-panel" type="button" role="tab" aria-controls="driver-panel" aria-selected="false">
+                            <i class="bi bi-car-front-fill"></i> Oferecer Carona
+                        </button>
+                    </nav>
+    
+                    <!-- Conteúdo das Abas -->
+                    <div class="tab-content">
+                        <!-- Painel: Pedir Carona -->
+                        <div class="tab-pane fade show active" id="rider-panel" role="tabpanel" aria-labelledby="rider-tab">
+                            <form id="formProcurarCarona">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="inputPartida">
+                                        <i class="bi bi-geo-alt-fill"></i> Local de Partida
+                                    </label>
+                                    <input type="text" class="form-control" id="inputPartida" placeholder="📍 Meu Local Atual">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="inputDestino">
+                                        <i class="bi bi-flag-fill"></i> Destino (Campus/Bairro)
+                                    </label>
+                                    <input type="text" class="form-control" id="inputDestino" placeholder="🏁 Campus Principal">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-search"></i> Procurar Carona
+                                </button>
+                            </form>
+                        </div>
+    
+                        <!-- Painel: Oferecer Carona -->
+                        <div class="tab-pane fade" id="driver-panel" role="tabpanel" aria-labelledby="driver-tab">
+                            <form id="formOferecerCarona">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="inputPartidaMotorista">
+                                        <i class="bi bi-geo-alt-fill"></i> Saindo de onde?
+                                    </label>
+                                    <input type="text" class="form-control" id="inputPartidaMotorista" placeholder="Digite o local de partida">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="inputDestinoMotorista">
+                                        <i class="bi bi-flag-fill"></i> Indo para onde?
+                                    </label>
+                                    <input type="text" class="form-control" id="inputDestinoMotorista" placeholder="Digite o destino">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="driverCost">
+                                        <i class="bi bi-currency-dollar"></i> R$ (Ajuda de Custo)
+                                    </label>
+                                    <input type="text" class="form-control" id="driverCost" placeholder="Ex: 5,00" style="max-width: 150px;">
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-send-fill"></i> Publicar Rota
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <main id="page-viagens" class="page app-container">
+            </main>
+
+        <main id="page-chat" class="page chat-container">
+            </main>
+        
+    </div> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>// Aguarda o DOM (a página) ser totalmente carregado
+document.addEventListener('DOMContentLoaded', () => {
+
+    // =============================================
+    // CHAVE DA API E VARIÁVEIS GLOBAIS
+    // =============================================
+    
+    // **COLE SUA CHAVE DO OPENROUTESERVICE (ORS) AQUI**
+    // (AQUELA NOVA QUE VOCÊ GEROU, NÃO A QUE VOCÊ POSTOU)
+    const ORS_API_KEY = 'SUA_NOVA_CHAVE_SECRETA_DO_ORS_AQUI';
+
+    let map; // Variável global para guardar a instância do mapa
+    let currentRouteLayer = null; // A linha da rota (para apagar depois)
+    let startMarker = null; // Alfinete de Partida
+    let endMarker = null; // Alfinete de Destino
+
+    // =============================================
+    // SELETORES DE PÁGINA E NAVEGAÇÃO
+    // =============================================
+    const allPages = document.querySelectorAll('.page');
+    const navButtons = document.querySelectorAll('.nav-btn');
+
+    // Função para mostrar uma página específica e esconder as outras
+    function showPage(pageId) {
+        // Esconde todas as páginas
+        allPages.forEach(page => {
+            page.style.display = 'none';
+        });
+
+        // Mostra a página desejada
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+            
+            // Define o display (flex para containers, block para outros)
+            if (['page-mapa', 'page-viagens', 'page-chat', 'page-login'].includes(pageId)) {
+                targetPage.style.display = 'flex';
+            } else {
+                targetPage.style.display = 'block';
+            }
+
+            // LÓGICA DO MAPA (CORREÇÃO DO MAPA BRANCO)
+            if (pageId === 'page-mapa') {
+                if (!map) { // Se o mapa ainda NÃO foi criado
+                    inicializarMapa();
+                } else {
+                    // A CORREÇÃO MÁGICA DO LEAFLET:
+                    // Espera 100ms para a tela renderizar e FORÇA o mapa a se redimensionar
+                    setTimeout(function() {
+                        map.invalidateSize();
+                    }, 100); 
+                }
+            }
+        }
+    }
+
+    // Adiciona o 'click' (evento) para todos os botões de navegação da sidebar
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove 'active' de todos os botões
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            // Adiciona 'active' no botão clicado
+            button.classList.add('active');
+            
+            const targetPageId = button.getAttribute('data-target');
+            showPage(targetPageId);
+        });
+    });
+
+    // Mostra a página de login inicial
+    showPage('page-login');
+
+
+    // =============================================
+    // LÓGICA DO MAPA (LEAFLET + ORS)
+    // =============================================
+
+    function inicializarMapa() {
+        // Inicializa o mapa Leaflet
+        map = L.map('map', {
+            zoomControl: false // Oculta o controle de zoom padrão
+        }).setView([-26.68, -53.52], 12); // Centro (Ex: Região de Guaraciaba/SMO)
+
+        // Adiciona o TEMA DE MAPA (Tile Layer) escuro e gratuito
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // Quando o mapa carregar, plote as caronas (mock data)
+        plotarCaronas(map);
+    }
+
+    // Função para "traduzir" texto em coordenadas [lon, lat]
+    async function getCoords(texto) {
+        if (!texto) return null;
+        try {
+            const response = await fetch(`https://api.openrouteservice.org/geocode/search?api_key=${ORS_API_KEY}&text=${encodeURIComponent(texto)}&boundary.country=BRA&size=1`);
+            const data = await response.json();
+            
+            if (data && data.features && data.features.length > 0) {
+                // Retorna [longitude, latitude]
+                return data.features[0].geometry.coordinates; 
+            } else {
+                console.warn('Endereço não encontrado: ' + texto);
+                return null; // Retorna nulo se não achar
+            }
+        } catch (err) {
+            console.error('Erro no Geocoding (ORS):', err);
+            return null;
+        }
+    }
+
+    // Função para desenhar a rota no mapa
+    async function desenharRota(partidaTxt, destinoTxt) {
+        
+        // 1. Traduzir textos para coordenadas
+        const coordsPartida = await getCoords(partidaTxt); // [lon, lat]
+        const coordsDestino = await getCoords(destinoTxt); // [lon, lat]
+
+        // ==========================================================
+        // CORREÇÃO 1: VERIFICA SE AS COORDENADAS EXISTEM (ANTI-ERRO 400)
+        // ==========================================================
+        if (!coordsPartida) {
+            alert('Endereço de PARTIDA não encontrado: "' + partidaTxt + '"');
+            return; // Para a execução
+        }
+        if (!coordsDestino) {
+            alert('Endereço de DESTINO não encontrado: "' + destinoTxt + '"');
+            return; // Para a execução
+        }
+        // ==========================================================
+
+        // 2. Se as coordenadas são válidas, busca a rota
+        try {
+            const response = await fetch('https://api.openrouteservice.org/v2/directions/driving-car', {
+                method: 'POST',
+                headers: {
+                    'Authorization': ORS_API_KEY,
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+                body: JSON.stringify({
+                    'coordinates': [
+                        coordsPartida,  // [lon, lat]
+                        coordsDestino   // [lon, lat]
+                    ]
+                })
+            });
+
+            if (!response.ok) {
+                // Se a API retornar um erro (como 400, 500 etc)
+                throw new Error('Erro ao calcular a rota. Status: ' + response.status);
+            }
+
+            const data = await response.json();
+            
+            if (data.routes && data.routes.length > 0) {
+                // Passa a GEOMETRIA da rota para a função de plotar
+                plotarLinhaNoMapa(data.routes[0].geometry); 
+            } else {
+                alert('Não foi possível encontrar uma rota entre os locais.');
+            }
+        } catch (err) {
+            console.error('Erro na API de Rotas (ORS):', err);
+            alert('Erro ao calcular a rota: ' + err.message);
+        }
+    }
+
+    // Função para "pintar" a linha e os alfinetes
+    function plotarLinhaNoMapa(routeGeometry) { // 'routeGeometry' é o que recebemos
+
+        // 1. Limpa a rota e os ALFINETES anteriores
+        if (currentRouteLayer) {
+            map.removeLayer(currentRouteLayer);
+        }
+        if (startMarker) {
+            map.removeLayer(startMarker);
+        }
+        if (endMarker) {
+            map.removeLayer(endMarker);
+        }
+
+        // ==========================================================
+        // CORREÇÃO 2: "ENVELOPAR" A GEOMETRIA (ANTI-ERRO "Invalid GeoJSON")
+        // ==========================================================
+        const routeFeature = {
+            "type": "Feature",
+            "geometry": routeGeometry // <-- A geometria vai AQUI DENTRO
+        };
+        // ==========================================================
+
+        // 2. Cria a nova camada de rota
+        currentRouteLayer = L.geoJSON(routeFeature, {
+            style: {
+                color: '#FFA500', // Laranja
+                weight: 6,
+                opacity: 0.8
+            }
+        }).addTo(map);
+
+        // 3. Adiciona os "Alfinetes" (Pinos)
+        const startCoords = routeGeometry.coordinates[0]; 
+        const endCoords = routeGeometry.coordinates[routeGeometry.coordinates.length - 1]; 
+
+        const startIcon = L.divIcon({
+            className: 'custom-leaflet-icon',
+            html: '<i class="bi bi-geo-alt-fill" style="font-size: 2rem; color: #198754;"></i>',
+            iconSize: [30, 30], iconAnchor: [15, 30] 
+        });
+        const endIcon = L.divIcon({
+            className: 'custom-leaflet-icon',
+            html: '<i class="bi bi-geo-fill" style="font-size: 2rem; color: #DC3545;"></i>',
+            iconSize: [30, 30], iconAnchor: [15, 30] 
+        });
+
+        // Adiciona os marcadores (Leaflet usa [lat, lon], ORS nos dá [lon, lat])
+        startMarker = L.marker([startCoords[1], startCoords[0]], { icon: startIcon }).addTo(map);
+        endMarker = L.marker([endCoords[1], endCoords[0]], { icon: endIcon }).addTo(map);
+
+        // 4. Dá zoom na rota
+        map.fitBounds(currentRouteLayer.getBounds(), {
+            padding: [50, 50] // Espaçamento (padding)
+        });
+    }
+
+    // Função (mock) para plotar caronas ativas
+    function plotarCaronas(map) {
+        // ... (seu código de plotar caronas) ...
+    }
+
+
+    // =============================================
+    // LISTENERS DE FORMULÁRIOS
+    // =============================================
+
+    // Listener para "Pedir Carona"
+    const formProcurar = document.getElementById('formProcurarCarona');
+    if (formProcurar) {
+        formProcurar.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const partidaTxt = document.getElementById('inputPartida').value;
+            const destinoTxt = document.getElementById('inputDestino').value;
+            await desenharRota(partidaTxt, destinoTxt);
+        });
+    }
+
+    // Listener para "Oferecer Carona"
+    const formOferecer = document.getElementById('formOferecerCarona');
+    if (formOferecer) {
+        formOferecer.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const partidaTxt = document.getElementById('inputPartidaMotorista').value;
+            const destinoTxt = document.getElementById('inputDestinoMotorista').value;
+            await desenharRota(partidaTxt, destinoTxt);
+
+            // ... (Aqui entra sua lógica de 'fetch' para o Backend) ...
+            // console.log("Publicando rota no backend...");
+        });
+    }
+
+    // Listener para "Login"
+    const loginForm = document.getElementById('loginForm');
+    if(loginForm) {
+        // ... (seu código de loginForm.addEventListener) ...
+    }
+
+    // Listener para "Cadastro"
+    const regForm = document.getElementById('registrationForm');
+    if(regForm) {
+        // ... (seu código de registrationForm.addEventListener) ...
+    }
+
+    // Listener para "Upload de Imagem"
+    // ... (seu código de setupImagePreview) ...
+
+});</script>
+</body>
+</html>

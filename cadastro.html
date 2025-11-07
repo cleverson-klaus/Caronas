@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - UniCarona</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .register-header h1 {
+            color: #1e3c72;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+
+        .register-header p {
+            color: #6c757d;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            color: #6c757d;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: #2a5298;
+        }
+
+        /* Upload de Foto de Perfil (Circular) */
+        .profile-upload-section {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .profile-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            border: 3px solid #dee2e6;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-preview:hover {
+            border-color: #2a5298;
+            transform: scale(1.05);
+        }
+
+        .profile-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .profile-preview .placeholder-icon {
+            font-size: 3rem;
+            color: #adb5bd;
+        }
+
+        .profile-preview.has-image .placeholder-icon {
+            display: none;
+        }
+
+        .profile-preview.has-image img {
+            display: block;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.3);
+        }
+
+        .file-input-label input[type="file"] {
+            display: none;
+        }
+
+        /* Upload de Carteirinha (Retangular) */
+        .card-upload-section {
+            margin: 2rem 0;
+        }
+
+        .card-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background-color: #e9ecef;
+            border: 3px dashed #dee2e6;
+            border-radius: 15px;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .card-preview:hover {
+            border-color: #2a5298;
+            background-color: #f8f9fa;
+        }
+
+        .card-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+
+        .card-preview .placeholder-text {
+            text-align: center;
+            color: #adb5bd;
+        }
+
+        .card-preview .placeholder-text i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-preview.has-image .placeholder-text {
+            display: none;
+        }
+
+        .card-preview.has-image img {
+            display: block;
+        }
+
+        .form-check {
+            margin: 1.5rem 0;
+        }
+
+        .form-check-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: #2a5298;
+            border-color: #2a5298;
+        }
+
+        .form-check-label {
+            color: #495057;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+
+        .form-check-label a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-check-label a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(42, 82, 152, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 576px) {
+            .register-card {
+                padding: 1.5rem;
+            }
+
+            .register-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-preview {
+                width: 120px;
+                height: 120px;
+            }
+
+            .card-preview {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-card">
+        <!-- Cabeçalho -->
+        <div class="register-header">
+            <h1><i class="bi bi-car-front-fill"></i> Crie sua Conta UniCarona</h1>
+            <p>Etapa de Verificação de Estudante</p>
+        </div>
+
+        <!-- Formulário -->
+        <form id="registerForm" onsubmit="handleSubmit(event)">
+            <!-- Nome Completo -->
+            <div class="mb-3">
+                <div id="alert-placeholder"></div>
+            </div>
+
+            <div class="mb-3">
+                <label for="fullName" class="form-label">
+                    <i class="bi bi-person-fill"></i> Nome Completo
+                </label>
+                <input type="text" class="form-control" id="fullName" name="fullName" required 
+                       placeholder="Digite seu nome completo">
+            </div>
+
+            <!-- E-mail da Universidade -->
+            <div class="mb-3">
+                <label for="universityEmail" class="form-label">
+                    <i class="bi bi-envelope-fill"></i> E-mail da Universidade
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-building"></i>
+                    </span>
+                    <input type="email" class="form-control" id="universityEmail" name="universityEmail" required 
+                           placeholder="seu.email@universidade.edu.br">
+                </div>
+            </div>
+
+            <!-- Senha -->
+            <div class="mb-3">
+                <label for="password" class="form-label">
+                    <i class="bi bi-lock-fill"></i> Criar Senha
+                </label>
+                <input type="password" class="form-control" id="password" name="password" required 
+                       placeholder="Mínimo de 6 caracteres" minlength="6">
+            </div>
+
+            <!-- Upload Foto de Perfil -->
+            <div class="profile-upload-section">
+                <div class="profile-preview" id="profilePreview" onclick="document.getElementById('profileInput').click()">
+                    <div class="placeholder-icon">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <img id="profileImage" src="" alt="Foto de perfil">
+                </div>
+                <label for="profileInput" class="file-input-label">
+                    <i class="bi bi-camera-fill"></i> Enviar Foto do Rosto
+                    <input type="file" id="profileInput" name="profileImage" accept="image/*" 
+                           onchange="previewProfileImage(this)">
+                </label>
+            </div>
+
+            <!-- Upload Carteirinha -->
+            <div class="card-upload-section">
+                <label class="form-label text-center d-block">
+                    <i class="bi bi-card-text"></i> Foto da Carteirinha de Estudante
+                </label>
+                <div class="card-preview" id="cardPreview" onclick="document.getElementById('cardInput').click()">
+                    <div class="placeholder-text">
+                        <i class="bi bi-image"></i>
+                        <div>Clique para enviar a foto</div>
+                    </div>
+                    <img id="cardImage" src="" alt="Carteirinha de estudante">
+                </div>
+                <label for="cardInput" class="file-input-label d-block text-center">
+                    <i class="bi bi-upload"></i> Enviar Foto da Carteirinha
+                    <input type="file" id="cardInput" name="cardImage" accept="image/*" 
+                           onchange="previewCardImage(this)">
+                </label>
+            </div>
+
+            <!-- Termos e Condições -->
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="termsCheck" name="terms" required>
+                <label class="form-check-label" for="termsCheck">
+                    Li e aceito os <a href="#" onclick="event.preventDefault(); alert('Termos de Uso');">Termos de Uso</a> 
+                    e <a href="#" onclick="event.preventDefault(); alert('Política de Privacidade');">Política de Privacidade</a>
+                </label>
+            </div>
+
+            <!-- Botão de Submit -->
+            <button type="submit" class="btn btn-submit" id="submitBtn">
+                <i class="bi bi-check-circle-fill"></i> Finalizar Cadastro
+            </button>
+        </form>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Módulo de API -->
+    <script src="api.js"></script>
+
+    <script>
+        // Preview da foto de perfil (circular)
+        function previewProfileImage(input) {
+            const preview = document.getElementById('profilePreview');
+            const image = document.getElementById('profileImage');
+            const file = input.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    image.src = e.target.result;
+                    preview.classList.add('has-image');
+                };
+                
+                reader.readAsDataURL(file);
+            } else {
+                image.src = '';
+                preview.classList.remove('has-image');
+            }
+        }
+
+        // Preview da carteirinha (retangular)
+        function previewCardImage(input) {
+            const preview = document.getElementById('cardPreview');
+            const image = document.getElementById('cardImage');
+            const file = input.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    image.src = e.target.result;
+                    preview.classList.add('has-image');
+                };
+                
+                reader.readAsDataURL(file);
+            } else {
+                image.src = '';
+                preview.classList.remove('has-image');
+            }
+        }
+
+        // Validação e envio do formulário
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const submitBtn = document.getElementById('submitBtn');
+            const alertPlaceholder = document.getElementById('alert-placeholder');
+
+            // Limpar alertas anteriores
+            alertPlaceholder.innerHTML = '';
+
+            // Desabilitar botão durante o envio
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processando...';
+
+            const userData = {
+                nome: form.fullName.value,
+                email: form.universityEmail.value,
+                password: form.password.value,
+            };
+
+            try {
+                const result = await window.api.cadastrarUsuario(userData);
+
+                if (result.error) {
+                    throw new Error(result.details || result.error);
+                }
+
+                // Exibir alerta de sucesso
+                showAlert('Cadastro realizado com sucesso! Você será redirecionado para o login.', 'success');
+
+                // Redirecionar para a página de login após um tempo
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 3000);
+
+            } catch (error) {
+                // Exibir alerta de erro
+                showAlert(error.message, 'danger');
+            } finally {
+                // Reabilitar o botão
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Finalizar Cadastro';
+            }
+        }
+
+        // Função para exibir alertas dinâmicos
+        function showAlert(message, type) {
+            const alertPlaceholder = document.getElementById('alert-placeholder');
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = [
+                `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+                `   <div>${message}</div>`,
+                '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                '</div>'
+            ].join('');
+
+            alertPlaceholder.append(wrapper);
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ============================================= */
+/* GERAL E ESTRUTURA SPA (TEMA DARK) */
+/* ============================================= */
+:root {
+    --sidebar-width: 80px; /* Largura da nossa nova sidebar */
+    --dark-bg: #121212;
+    --dark-bg-secondary: #1F1F1F;
+    --dark-border: #333;
+    --text-light: #E0E0E0;
+    --text-muted: #888;
+    --brand-blue: #004a91;
+    --brand-orange: #FF8C00;
+    --danger: #dc3545; /* Cor para alertas e perigo */
+}
+
+body.dark-mode {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden; 
+}
+
+/* ============================================= */
+/* A NOVA SIDEBAR VERTICAL */
+/* ============================================= */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    background-color: var(--dark-bg-secondary);
+    border-right: 1px solid var(--dark-border);
+    display: flex;
+    flex-direction: column; /* Empilha os itens verticalmente */
+    align-items: center;
+    padding: 15px 0;
+    z-index: 2000; /* Mais alto que tudo */
+}
+
+.sidebar-logo {
+    color: var(--brand-primary);
+    font-size: 2rem;
+    margin-bottom: 25px;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espaço entre os botões */
+}
+
+.sidebar .nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted); /* Cor inativa */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.70rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+.sidebar .nav-btn i {
+    font-size: 1.75rem;
+    margin-bottom: 4px;
+}
+.sidebar .nav-btn.active {
+    color: var(--brand-primary); /* Cor ativa */
+}
+.sidebar .nav-btn:hover {
+    color: white; /* Efeito hover */
+}
+
+/* O BOTÃO DE PÂNICO (DENTRO DA SIDEBAR) */
+.sos-button-sidebar {
+    background-color: #dc3545; /* Vermelho */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 60px; /* Largura fixa */
+    padding: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    animation: pulse 2s infinite; /* <-- A ANIMAÇÃO */
+    cursor: pointer;
+    margin-top: auto; /* JOGA O BOTÃO PARA BAIXO */
+}
+.sos-button-sidebar i {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+.sos-button-sidebar:hover {
+    background-color: #c82333;
+}
+
+
+/* ============================================= */
+/* O CONTAINER DE CONTEÚDO */
+/* ============================================= */
+.content-container {
+    /* ESSA É A MÁGICA: Empurra todo o conteúdo para a direita */
+    margin-left: var(--sidebar-width);
+}
+
+.page {
+    display: none;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Container da Página do Mapa */
+.app-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.map-placeholder {
+    flex-grow: 1; /* Ocupa todo o espaço */
+    position: relative; /* ESSENCIAL */
+    overflow: hidden;
+    background-color: #121212; /* Fundo escuro enquanto o mapa carrega */
+}
+
+/* O MAPA REAL (QUE O JS VAI CRIAR) */
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+/* O PAINEL FLUTUANTE (FORMULÁRIO) */
+.action-panel {
+    position: absolute;
+    bottom: 20px; 
+    left: 10px;
+    right: 10px;
+    max-width: 500px; /* Limita a largura em telas grandes */
+    margin-left: auto;
+    margin-right: auto;
+
+    /* EFEITO "VIDRO ESCURO" */
+    background-color: rgba(28, 28, 30, 0.85); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    
+    padding: 20px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 1020;
+}
+
+/* AS ABAS "PEDIR/OFERECER" (CORRIGIDAS) */
+.mode-toggle {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.3); /* Fundo das abas */
+    border-radius: 12px;
+    margin-bottom: 20px; /* Espaço abaixo das abas */
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.mode-toggle .nav-link {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    color: #AFAFAF; /* Texto da aba inativa */
+    border-radius: 9px;
+    padding: 10px 5px;
+    display: flex; /* Para alinhar ícone e texto */
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Espaço entre ícone e texto */
+    border: none;
+    cursor: pointer;
+}
+.mode-toggle .nav-link.active {
+    background-color: var(--brand-primary); /* Verde na aba ativa */
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 191, 143, 0.5);
+}
+
+/* O FORMULÁRIO (CORRIGIDO) */
+.action-panel .form-label {
+    color: #E0E0E0;
+    font-weight: 600;
+    margin-bottom: 0.5rem; /* O ESPAÇO QUE FALTAVA */
+    display: block; /* Garante que ocupe a linha */
+}
+.action-panel .form-control {
+    background-color: #333; /* Fundo da caixa escuro */
+    border: 1px solid #555;
+    color: white; /* Texto digitado branco */
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+}
+.action-panel .form-control::placeholder {
+    color: #888;
+}
+.action-panel .form-control:focus {
+    background-color: #333;
+    border-color: var(--brand-primary); /* Borda verde ao focar */
+    color: white;
+    box-shadow: 0 0 0 0.25rem rgba(0, 191, 143, 0.5);
+}
+
+/* BOTÃO DE "PUBLICAR ROTA" (LARANJA/AMARELO) */
+.action-panel .btn-warning { /* Mudei para warning para combinar com o laranja */
+    background: var(--brand-secondary); /* Laranja */
+    color: #121212; /* Texto escuro */
+    font-weight: 700;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+}
+.action-panel .btn-primary {
+    background-color: var(--brand-primary); /* Verde */
+    font-weight: 700;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+/* Ajustes do Mapa Mapbox */
+.mapboxgl-container { background: #222; }
+.mapboxgl-ctrl-attrib-inner { display: none; } /* Opcional: esconde atribuição se poluir a tela */
+
+
+/* ============================================= */
+/* ESTILOS DA PÁGINA DE CADASTRO */
+/* ============================================= */
+.register-card {
+    background: #2a2a2e;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    padding: 2.5rem;
+    max-width: 600px;
+    width: 100%;
+    border: 1px solid #444;
+    margin: 2rem auto;
+}
+
+.register-header h1 {
+    color: var(--brand-blue);
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+}
+
+.register-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.register-card .form-label {
+    color: var(--text-light);
+}
+
+.register-card .form-control {
+    background-color: #333;
+    border: 1px solid #555;
+    color: white;
+}
+
+.register-card .form-control:focus {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 3px rgba(0, 74, 145, 0.4);
+}
+
+.register-card .input-group-text {
+    background-color: #333;
+    border: 1px solid #555;
+    color: var(--text-muted);
+}
+
+.profile-upload-section, .card-upload-section {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.profile-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #333;
+    border: 3px solid #555;
+    margin: 0 auto 1rem;
+    cursor: pointer;
+}
+
+.profile-preview:hover {
+    border-color: var(--brand-blue);
+}
+
+.profile-preview .placeholder-icon {
+    font-size: 3rem;
+    color: #777;
+}
+
+.file-input-label {
+    background: linear-gradient(135deg, #004a91 0%, #003b73 100%);
+    color: white;
+}
+
+.card-preview {
+    width: 100%;
+    max-width: 400px;
+    height: 250px;
+    background-color: #333;
+    border: 3px dashed #555;
+    border-radius: 15px;
+    margin: 0 auto 1rem;
+    cursor: pointer;
+}
+
+.card-preview:hover {
+    border-color: var(--brand-blue);
+}
+
+.card-preview .placeholder-text {
+    color: #777;
+}
+
+.register-card .form-check-input {
+    background-color: #333;
+    border-color: #555;
+}
+
+.register-card .form-check-input:checked {
+    background-color: var(--brand-blue);
+    border-color: var(--brand-blue);
+}
+
+.register-card .form-check-label {
+    color: var(--text-light);
+}
+
+.register-card .form-check-label a {
+    color: var(--brand-blue);
+}
+
+.register-card .btn-submit {
+    background: linear-gradient(135deg, #004a91 0%, #003b73 100%);
+    color: white;
+}
+
+/* ============================================= */
+/* ESTILOS DA PÁGINA DE CHAT */
+/* ============================================= */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background-color: var(--dark-bg);
+}
+
+.chat-header {
+    background: var(--dark-bg-secondary);
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--dark-border);
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.contact-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.contact-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.contact-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.message {
+    display: flex;
+    max-width: 70%;
+}
+
+.message.sent {
+    align-self: flex-end;
+}
+
+.message.received {
+    align-self: flex-start;
+}
+
+.message-bubble {
+    padding: 0.75rem 1rem;
+    border-radius: 18px;
+    word-wrap: break-word;
+}
+
+.message.sent .message-bubble {
+    background: var(--brand-blue);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message.received .message-bubble {
+    background-color: var(--dark-bg-secondary);
+    color: var(--text-light);
+    border-bottom-left-radius: 4px;
+}
+
+.message-time {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    padding: 0 0.5rem;
+}
+
+.message.sent .message-time {
+    text-align: right;
+}
+
+.chat-footer {
+    background: var(--dark-bg-secondary);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid var(--dark-border);
+    flex-shrink: 0;
+}
+
+.message-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #555;
+    border-radius: 25px;
+    font-size: 1rem;
+    background-color: #333;
+    color: white;
+    outline: none;
+}
+
+.message-input:focus {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 3px rgba(0, 74, 145, 0.4);
+}
+
+.send-button {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--brand-blue);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* ============================================= */
+/* ANIMAÇÃO E MODAL DO BOTÃO DE PÂNICO */
+/* ============================================= */
+
+/* Animação de Pulsação */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
+/* O Fundo do Modal (Escondido) */
+.modal {
+    display: none; /* Escondido por padrão */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+}
+
+/* O Conteúdo do Modal */
+.modal-content {
+    background-color: var(--dark-bg-secondary);
+    border-radius: 15px;
+    width: 85%;
+    max-width: 400px;
+    padding: 25px;
+    text-align: center;
+    border: 1px solid var(--dark-border);
+    animation: modalAppear 0.3s;
+}
+
+/* Animação de surgimento do Modal */
+@keyframes modalAppear {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-icon {
+    font-size: 3rem;
+    color: var(--danger);
+    margin-bottom: 15px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: var(--text-light);
+}
+
+.modal-text {
+    margin-bottom: 25px;
+    color: var(--text-muted);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.modal-buttons .btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-danger {
+    background-color: var(--danger);
+    color: white;
+}
+.btn-secondary {
+    background-color: #333;
+    color: white;
+}

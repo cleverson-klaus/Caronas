@@ -5,158 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - UniCarona</title>
     
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
-    <div class="register-card">
-        <!-- Cabeçalho -->
-        <div class="register-header">
-            <h1><i class="bi bi-car-front-fill"></i> Crie sua Conta UniCarona</h1>
-            <p>Etapa de Verificação de Estudante</p>
-        </div>
+<body class="dark-mode">
+    <div class="auth-container">
+        <div class="register-card">
+            <div class="register-header">
+                <img src="/assets/img/gouni-logo.png" alt="Logo GoUni" style="width: 80px; height: auto; margin-bottom: 1rem;">
+                <h1>Crie sua Conta</h1>
+                <p>Etapa de Verificação de Estudante</p>
+            </div>
 
-        <!-- Formulário -->
-        <form id="registerForm" onsubmit="handleSubmit(event)">
-            <!-- Nome Completo -->
-            <div class="mb-3">
+            <form id="registerForm" onsubmit="handleSubmit(event)">
                 <div id="alert-placeholder"></div>
-            </div>
 
-            <div class="mb-3">
-                <label for="fullName" class="form-label">
-                    <i class="bi bi-person-fill"></i> Nome Completo
-                </label>
-                <input type="text" class="form-control" id="fullName" name="fullName" required 
-                       placeholder="Digite seu nome completo">
-            </div>
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">
+                        <i class="bi bi-person-fill"></i> Nome Completo
+                    </label>
+                    <input type="text" class="form-control" id="fullName" name="fullName" required 
+                           placeholder="Digite seu nome completo">
+                </div>
 
-            <!-- E-mail da Universidade -->
-            <div class="mb-3">
-                <label for="universityEmail" class="form-label">
-                    <i class="bi bi-envelope-fill"></i> E-mail da Universidade
-                </label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <i class="bi bi-building"></i>
-                    </span>
+                <div class="mb-3">
+                    <label for="universityEmail" class="form-label">
+                        <i class="bi bi-envelope-fill"></i> E-mail da Universidade
+                    </label>
                     <input type="email" class="form-control" id="universityEmail" name="universityEmail" required 
                            placeholder="seu.email@universidade.edu.br">
                 </div>
-            </div>
 
-            <!-- Senha -->
-            <div class="mb-3">
-                <label for="password" class="form-label">
-                    <i class="bi bi-lock-fill"></i> Criar Senha
-                </label>
-                <input type="password" class="form-control" id="password" name="password" required 
-                       placeholder="Mínimo de 6 caracteres" minlength="6">
-            </div>
-
-            <!-- Upload Foto de Perfil -->
-            <div class="profile-upload-section">
-                <div class="profile-preview" id="profilePreview" onclick="document.getElementById('profileInput').click()">
-                    <div class="placeholder-icon">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                    <img id="profileImage" src="" alt="Foto de perfil">
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <i class="bi bi-lock-fill"></i> Criar Senha
+                    </label>
+                    <input type="password" class="form-control" id="password" name="password" required 
+                           placeholder="Mínimo de 6 caracteres" minlength="6">
                 </div>
-                <label for="profileInput" class="file-input-label">
-                    <i class="bi bi-camera-fill"></i> Enviar Foto do Rosto
-                    <input type="file" id="profileInput" name="profileImage" accept="image/*" 
-                           onchange="previewProfileImage(this)">
-                </label>
-            </div>
 
-            <!-- Upload Carteirinha -->
-            <div class="card-upload-section">
-                <label class="form-label text-center d-block">
-                    <i class="bi bi-card-text"></i> Foto da Carteirinha de Estudante
-                </label>
-                <div class="card-preview" id="cardPreview" onclick="document.getElementById('cardInput').click()">
-                    <div class="placeholder-text">
-                        <i class="bi bi-image"></i>
-                        <div>Clique para enviar a foto</div>
-                    </div>
-                    <img id="cardImage" src="" alt="Carteirinha de estudante">
+                <div class="mb-3">
+                    <label for="gender" class="form-label">
+                        <i class="bi bi-gender-ambiguous"></i> Gênero
+                    </label>
+                    <select class="form-control" id="gender" name="gender">
+                        <option value="" disabled selected>Selecione uma opção</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="feminino">Feminino</option>
+                        <option value="nao-binario">Não-binário</option>
+                        <option value="outro">Outro</option>
+                        <option value="prefiro-nao-informar">Prefiro não informar</option>
+                    </select>
                 </div>
-                <label for="cardInput" class="file-input-label d-block text-center">
-                    <i class="bi bi-upload"></i> Enviar Foto da Carteirinha
-                    <input type="file" id="cardInput" name="cardImage" accept="image/*" 
-                           onchange="previewCardImage(this)">
-                </label>
-            </div>
 
-            <!-- Termos e Condições -->
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="termsCheck" name="terms" required>
-                <label class="form-check-label" for="termsCheck">
-                    Li e aceito os <a href="#" onclick="event.preventDefault(); alert('Termos de Uso');">Termos de Uso</a> 
-                    e <a href="#" onclick="event.preventDefault(); alert('Política de Privacidade');">Política de Privacidade</a>
-                </label>
-            </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isDriverCheck" name="isDriverCheck">
+                        <label class="form-check-label" for="isDriverCheck">
+                            Sou motorista e quero oferecer caronas
+                        </label>
+                    </div>
+                </div>
 
-            <!-- Botão de Submit -->
-            <button type="submit" class="btn btn-submit" id="submitBtn">
-                <i class="bi bi-check-circle-fill"></i> Finalizar Cadastro
-            </button>
-        </form>
+                <div id="vehicle-info-section" style="display: none;">
+                    <div class="mb-3">
+                        <label for="vehicleModel" class="form-label">
+                            <i class="bi bi-car-front-fill"></i> Modelo do Veículo
+                        </label>
+                        <input type="text" class="form-control" id="vehicleModel" name="vehicleModel" 
+                               placeholder="Ex: Volkswagen Gol">
+                    </div>
+                    <div class="mb-3">
+                        <label for="vehicleColor" class="form-label">
+                            <i class="bi bi-palette-fill"></i> Cor do Veículo
+                        </label>
+                        <input type="text" class="form-control" id="vehicleColor" name="vehicleColor" 
+                               placeholder="Ex: Prata">
+                    </div>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="termsCheck" name="terms" required>
+                    <label class="form-check-label" for="termsCheck">
+                        Li e aceito os <a href="#">Termos de Uso</a> 
+                        e <a href="#">Política de Privacidade</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-submit" id="submitBtn">
+                    <i class="bi bi-check-circle-fill"></i> Finalizar Cadastro
+                </button>
+            </form>
+        </div>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../scripts/api.js"></script>
 
-    <!-- Módulo de API -->
-    <script src="../scripts/api.js"></script>
+    <script type="module">
+        // IMPORTA O MÓDULO DE API
+        import { api } from '../scripts/api.js';
 
-    <script>
-        // Preview da foto de perfil (circular)
-        function previewProfileImage(input) {
-            const preview = document.getElementById('profilePreview');
-            const image = document.getElementById('profileImage');
-            const file = input.files[0];
+        // Listener para mostrar/esconder campos do motorista
+        document.addEventListener('DOMContentLoaded', () => {
+            const driverCheck = document.getElementById('isDriverCheck');
+            const vehicleInfo = document.getElementById('vehicle-info-section');
 
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    image.src = e.target.result;
-                    preview.classList.add('has-image');
-                };
-                
-                reader.readAsDataURL(file);
-            } else {
-                image.src = '';
-                preview.classList.remove('has-image');
+            if (driverCheck && vehicleInfo) {
+                driverCheck.addEventListener('change', () => {
+                    if (driverCheck.checked) {
+                        vehicleInfo.style.display = 'block';
+                    } else {
+                        vehicleInfo.style.display = 'none';
+                    }
+                });
             }
-        }
-
-        // Preview da carteirinha (retangular)
-        function previewCardImage(input) {
-            const preview = document.getElementById('cardPreview');
-            const image = document.getElementById('cardImage');
-            const file = input.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    image.src = e.target.result;
-                    preview.classList.add('has-image');
-                };
-                
-                reader.readAsDataURL(file);
-            } else {
-                image.src = '';
-                preview.classList.remove('has-image');
-            }
-        }
+        });
 
         // Validação e envio do formulário
         async function handleSubmit(event) {
@@ -166,10 +132,7 @@
             const submitBtn = document.getElementById('submitBtn');
             const alertPlaceholder = document.getElementById('alert-placeholder');
 
-            // Limpar alertas anteriores
             alertPlaceholder.innerHTML = '';
-
-            // Desabilitar botão durante o envio
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processando...';
 
@@ -177,28 +140,29 @@
                 nome: form.fullName.value,
                 email: form.universityEmail.value,
                 password: form.password.value,
+                genero: form.gender.value || 'nao-informado',
+                is_driver: form.isDriverCheck.checked,
+                vehicle_model: form.vehicleModel.value || null,
+                vehicle_color: form.vehicleColor.value || null
             };
 
             try {
-                const result = await window.api.cadastrarUsuario(userData);
+                // Chama a API (do api.js) que fala com o backend
+                const result = await api.cadastrarUsuario(userData);
 
                 if (result.error) {
-                    throw new Error(result.details || result.error);
+                    throw new Error(result.message || 'Erro desconhecido');
                 }
 
-                // Exibir alerta de sucesso
-                showAlert('Cadastro realizado com sucesso! Você será redirecionado para o login.', 'success');
-
-                // Redirecionar para a página de login após um tempo
+                showAlert('Cadastro quase completo! Enviamos um link de confirmação para o seu email. Por favor, verifique sua caixa de entrada (e spam).', 'success');
+                
                 setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 3000);
+                    window.location.href = '../index.html'; // Volta para a página de login
+                }, 6000); 
 
             } catch (error) {
-                // Exibir alerta de erro
                 showAlert(error.message, 'danger');
             } finally {
-                // Reabilitar o botão
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Finalizar Cadastro';
             }
@@ -217,6 +181,9 @@
 
             alertPlaceholder.append(wrapper);
         }
+
+        // Anexa a função ao 'window' para ser acessível pelo HTML (onsubmit)
+        window.handleSubmit = handleSubmit;
 
     </script>
 </body>

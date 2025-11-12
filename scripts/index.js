@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             style: 'mapbox://styles/mapbox/dark-v11', // Tema escuro
             center: [-53.52, -26.68], // [lon, lat]
             zoom: 12,
-            pitch: 45 // Efeito 3D
+            pitch: 50 // [MODIFICADO] Esta linha ativa o 3D
         });
 
         map.on('load', () => {

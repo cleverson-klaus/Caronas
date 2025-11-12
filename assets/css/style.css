@@ -591,3 +591,17 @@ body.dark-mode {
     background-color: #333;
     color: white;
 }
+/* ============================================= */
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* [MODIFICADO] Alinha ao topo */
+    min-height: 100vh;
+    background-color: var(--dark-bg);
+    padding: 2rem 1rem; /* [MODIFICADO] Adiciona espaço no topo/fundo */
+    box-sizing: border-box;
+};
+
+
+

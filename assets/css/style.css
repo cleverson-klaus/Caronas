@@ -23,7 +23,6 @@ body.dark-mode {
     background-color: var(--dark-bg);
     color: var(--text-light);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    overflow: hidden; 
 }
 
 /* ============================================= */
@@ -593,15 +592,293 @@ body.dark-mode {
 }
 /* ============================================= */
 
+/* ============================================= */
+/* ESTILOS DA PÁGINA DE CADASTRO (RESTAURADO) */
+/* ============================================= */
+
+/* 1. Container Principal (REGRA ÚNICA E CORRIGIDA) */
 .auth-container {
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* [MODIFICADO] Alinha ao topo */
-    min-height: 100vh;
     background-color: var(--dark-bg);
-    padding: 2rem 1rem; /* [MODIFICADO] Adiciona espaço no topo/fundo */
+    padding: 2rem 1rem; /* Espaço no topo/fundo */
     box-sizing: border-box;
-};
+}
 
+/* 2. Card de Cadastro (Tema Escuro) */
+.register-card {
+    background-color: var(--dark-bg-secondary);
+    border-radius: 5px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    width: 800%;
+    max-width: 8000px; /* Limita a largura */
+    border: 1px solid var(--dark-border);
+}
 
+.register-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
 
+.register-header h1 {
+    color: var(--brand-blue);
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+
+.register-header p {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+/* 3. Labels e Textos (Brancos) */
+.register-card .form-label {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.register-card .text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* 4. Inputs (Fundo Branco, Texto Preto) */
+.register-card .form-control {
+    background-color: var(--input-bg-light);
+    color: var(--input-text-dark);
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    width: 100%; /* Garante a largura total */
+}
+
+.register-card .form-control:focus {
+    background-color: var(--input-bg-light);
+    color: var(--input-text-dark);
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 74, 145, 0.25);
+}
+
+.register-card .form-control::placeholder {
+    color: var(--placeholder-color);
+}
+
+/* 5. Checkboxes (Motorista, Termos) */
+.register-card .form-check-input {
+    background-color: #333;
+    border-color: #555;
+    cursor: pointer;
+}
+
+.register-card .form-check-input:checked {
+    background-color: var(--brand-blue);
+    border-color: var(--brand-blue);
+}
+
+.register-card .form-check-label {
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+.register-card .form-check-label a {
+    color: var(--brand-blue);
+    text-decoration: none;
+}
+.register-card .form-check-label a:hover {
+    text-decoration: underline;
+}
+
+/* 6. Botão de Finalizar Cadastro */
+.register-card .btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #004a91 0%, #003b73 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.register-card .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 74, 145, 0.4);
+}
+
+/* [NOVO] Estilos dos Locais Favoritos */
+.favoritos-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+.btn-favorito {
+    background-color: var(--dark-bg);
+    border: 1px solid var(--brand-blue);
+    color: var(--brand-blue);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.btn-favorito:hover {
+    background-color: var(--brand-blue);
+    color: white;
+}
+
+/* Container do input com o botão de salvar */
+.input-group-favorito {
+    position: relative;
+}
+.btn-salvar-favorito {
+    position: absolute;
+    right: 10px;
+    top: 38px; /* Ajuste manual para alinhar com o input */
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0 5px;
+    transition: all 0.2s;
+}
+.btn-salvar-favorito:hover {
+    color: var(--brand-orange);
+    transform: scale(1.2);
+}
+
+/* ============================================= */
+/* CSS DO PERFIL LOGADO (RESTAURADO) */
+/* ============================================= */
+
+/* Footer da Sidebar (Joga para baixo) */
+.sidebar-footer {
+    margin-top: auto; /* Joga todo o bloco para baixo */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative; /* Contexto para o menu pop-up */
+}
+
+/* Botão de Perfil (Avatar + Nome) */
+.profile-section-btn {
+    background: none;
+    border: none;
+    padding: 15px 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    border-top: 1px solid var(--dark-border);
+}
+.profile-section-btn:hover {
+    background: var(--dark-bg);
+}
+
+/* A "Bolinha" */
+.profile-avatar {
+    width: 40px; 
+    height: 40px;
+    border-radius: 50%;
+    background: var(--brand-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: 1px solid var(--brand-primary);
+}
+
+#profile-name {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+/* Botão SOS (Ajuste de margem) */
+.sos-button-sidebar {
+    margin-top: 15px; 
+    margin-bottom: 15px;
+}
+
+/* Menu Pop-up (Editar/Sair) */
+.profile-menu {
+    display: none; /* Escondido por padrão */
+    position: absolute;
+    bottom: 15px; 
+    left: 75px;   /* Flutua para FORA da sidebar */
+    min-width: 200px; /* Largura para caber o texto */
+    background-color: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 2100;
+    overflow: hidden;
+}
+.profile-menu.show {
+    display: block; /* Mostra o menu */
+}
+
+.profile-menu-item {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+.profile-menu-item:hover {
+    background-color: var(--dark-bg-secondary);
+}
+.profile-menu-item i {
+    font-size: 1.1rem;
+}
+/* Botão Sair (vermelho) */
+#logout-menu-btn:hover {
+    background-color: rgba(220, 53, 69, 0.2);
+    color: var(--danger);
+}
+
+/* ============================================= */
+/* CORREÇÕES DE TEMA (PÁGINA CARONAS) */
+/* ============================================= */
+
+/* 1. Corrige o texto azul "Favoritos:" */
+#criar-panel .form-label {
+    color: var(--text-light);
+}
+
+/* 2. Força o tema escuro nas abas "Pedir/Oferecer Carona" */
+#criar-panel .mode-toggle {
+    background-color: #111;
+    border: 1px solid var(--dark-border);
+}
+#criar-panel .mode-toggle .nav-link {
+    color: var(--text-muted);
+}
+#criar-panel .mode-toggle .nav-link.active {
+    background-color: var(--brand-blue);
+    color: white;
+}
+
+/* 3. Tenta forçar o tema escuro no input de data/hora */
+#criar-panel .form-control[type="datetime-local"] {
+    color-scheme: dark;
+}

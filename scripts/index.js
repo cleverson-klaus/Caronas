@@ -3,8 +3,8 @@
  * ============================================ */
 import { supabase } from './supabaseClient.js';
 import { api } from './api.js';
-import { traçarESalvarRota, buscarRotas } from './rotas.js';
-import { criarPedido, buscarPedidos } from './pedidos.js';
+import { traçarESalvarRota, buscarRotas, deletarRota } from './rotas.js'; // [MODIFICADO]
+import { criarPedido, buscarPedidos, deletarPedido } from './pedidos.js'; // [MODIFICADO]
 import { buscarFavoritos, criarFavorito } from './favoritos.js'; // [NOVO]
 document.addEventListener('DOMContentLoaded', () => {
     // =============================================
@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const allPages = document.querySelectorAll('.page');
     const desktopNavButtons = document.querySelectorAll('.sidebar-desktop .nav-btn');
     const mobileNavButtons = document.querySelectorAll('#mobile-nav .nav-btn');
-    function showPage(pageId) {
+    // [MODIFICADO] Adicionamos um parâmetro 'prefillData'
+    function showPage(pageId, prefillData = null) {
         allPages.forEach(page => {
             page.style.display = 'none';
         });
@@ -33,6 +34,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 inicializarMapa();
             } else {
                 setTimeout(() => map.resize(), 100); 
+            }
+        }
+
+        // [NOVO] Scrolla o chat e foca no input
+        if (pageId === 'page-chat') {
+            scrollToBottom();
+            const input = document.getElementById('messageInput');
+            if (input) input.focus();
+        }
+
+        // [NOVO] Lógica para preencher o formulário
+        if (pageId === 'page-viagens' && prefillData) {
+            
+            // Força a aba "Criar" e "Pedir Carona" a ficarem ativas
+            document.getElementById('criar-tab')?.click();
+            document.getElementById('rider-tab')?.click();
+            
+            // Preenche o campo de input correto
+            const inputElement = document.getElementById(prefillData.targetInput);
+            if (inputElement) {
+                inputElement.value = prefillData.name;
             }
         }
     }
@@ -348,6 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Listeners para os botões "Salvar Favorito" (Estrela) ---
     document.getElementById('btnSalvarPartida')?.addEventListener('click', () => salvarNovoFavorito('inputPartida'));
     document.getElementById('btnSalvarDestino')?.addEventListener('click', () => salvarNovoFavorito('inputDestino'));
+    document.getElementById('btnSalvarPartidaMotorista')?.addEventListener('click', () => salvarNovoFavorito('inputPartidaMotorista'));
+    document.getElementById('btnSalvarDestinoMotorista')?.addEventListener('click', () => salvarNovoFavorito('inputDestinoMotorista'));
+
     // =============================================
     // LÓGICA DO MAPA (MAPBOX GL JS)
     // =============================================
@@ -394,8 +419,69 @@ document.addEventListener('DOMContentLoaded', () => {
                     map.setPaintProperty(layerId, 'text-halo-width', 2); // Largura do contorno
                 }
             });
+            
+            // [NOVO] Listener de clique para POIs (Pontos de Interesse)
+            map.on('click', 'poi-label', (e) => {
+                // Pega o nome e as coordenadas do POI
+                const coordinates = e.lngLat;
+                const poiName = e.features[0].properties.name;
+
+                // Cria o HTML para o pop-up
+                const popupHTML = `
+                    <div class="poi-popup">
+                        <strong>${poiName}</strong>
+                        <p>Usar este local como:</p>
+                        <button class="btn btn-sm btn-primary w-100 mb-1 btn-popup-action" data-action="partida" data-name="${poiName}">
+                            📍 Ponto de Partida
+                        </button>
+                        <button class="btn btn-sm btn-success w-100 btn-popup-action" data-action="destino" data-name="${poiName}">
+                            🏁 Ponto de Destino
+                        </button>
+                    </div>
+                `;
+
+                // Cria e exibe o pop-up
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML(popupHTML)
+                    .addTo(map);
+            });
+
+            // Muda o cursor para "ponteiro" ao passar sobre um POI
+            map.on('mouseenter', 'poi-label', () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+            map.on('mouseleave', 'poi-label', () => {
+                map.getCanvas().style.cursor = '';
+            });
+
         });
     }
+
+    // [NOVA FUNÇÃO] - Converte Coordenadas [lon, lat] em Endereço
+    async function getAddressFromCoords(coords) {
+        // coords é [lon, lat]
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${coords[0]},${coords[1]}.json` +
+                    `?access_token=${MAPBOX_ACCESS_TOKEN}` +
+                    `&limit=1` +
+                    `&types=address,poi,locality,neighborhood`; 
+        
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Erro no Geocoding Reverso: Status ${response.status}`);
+            const data = await response.json();
+            
+            if (data?.features?.length > 0) {
+                return data.features[0].place_name; // Retorna o nome do local
+            } else {
+                return `${coords[1].toFixed(5)}, ${coords[0].toFixed(5)}`; 
+            }
+        } catch (err) {
+            console.error('Erro no Geocoding Reverso (Mapbox):', err);
+            return null;
+        }
+    }
+
     // =============================================
     // LÓGICA DA PÁGINA "CARONAS" (page-viagens)
     // =============================================
@@ -446,6 +532,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function carregarPedidosDeCarona() {
         const container = document.getElementById('pedidos-list-container');
         const loading = document.getElementById('pedidos-loading');
+        
+        const { data: { user } } = await supabase.auth.getUser(); // [NOVO] Pega o usuário logado
+
         if (!container || !loading) return;
         loading.style.display = 'block';
         container.innerHTML = ''; 
@@ -455,7 +544,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.innerHTML = `<div class="card-viagem empty-state"><i class="bi bi-person-arms-up"></i><h3>Ninguém está pedindo carona agora</h3><p>Seja o primeiro a publicar seu pedido!</p></div>`;
             } else {
                 pedidos.forEach(pedido => {
-                    container.insertAdjacentHTML('beforeend', criarCardPedido(pedido));
+                    // [MODIFICADO] Passa o ID do usuário logado
+                    const cardHTML = criarCardPedido(pedido, user?.id); 
+                    container.insertAdjacentHTML('beforeend', cardHTML);
                 });
             }
         } catch (error) {
@@ -466,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     // --- Cria o HTML de um card de PEDIDO ---
-    function criarCardPedido(pedido) {
+    function criarCardPedido(pedido, loggedInUserId) { // [MODIFICADO]
         const dataViagem = new Date(pedido.data_viagem).toLocaleString('pt-BR', { 
             day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' 
         });
@@ -476,8 +567,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pedido.preferencia_genero_motorista === 'apenas_mulher') {
             badgePreferencias = `<span class="status-badge status-female-only"><i class="bi bi-gender-female"></i> Só Motorista Mulher</span>`;
         }
+
+        // [NOVO] Adiciona o botão de deletar se for o dono
+        let deleteButtonHTML = '';
+        if (pedido.usuario_id === loggedInUserId) {
+            deleteButtonHTML = `<button class="btn-delete-post" title="Excluir pedido"><i class="bi bi-trash3-fill"></i></button>`;
+        }
+
         return `
         <div class="card-viagem trip-card" data-pedido-id="${pedido.id}">
+            ${deleteButtonHTML} 
             <div class="trip-header">
                 <div class="trip-date-time">
                     <i class="bi bi-calendar-event"></i>
@@ -497,7 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="trip-footer">
                 <div class="trip-participant">
-                    <i class="bi bi-person-circle"></i> Pedido por: <strong>${nomePassageiro}</strong>
+                    <div class="participant-avatar">${getInitials(nomePassageiro)}</div>
+                    <span>Pedido por: <strong>${nomePassageiro}</strong></span>
                 </div>
                 <button class="btn btn-action btn-details btn-oferecer-carona" data-user-id="${pedido.usuario_id}">
                     <i class="bi bi-send-fill"></i> Oferecer Carona (Chat)
@@ -507,14 +607,25 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
     // --- Cria o HTML de um card de OFERTA ---
-    function criarCardCarona(rota) {
+    function criarCardCarona(rota, loggedInUserId) { // [MODIFICADO]
         const dataViagem = rota.data_viagem ? 
             new Date(rota.data_viagem).toLocaleString('pt-BR', { 
                 day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' 
             }) : 'Data não definida';
         const custo = rota.custo ? `R$ ${parseFloat(rota.custo).toFixed(2)}` : 'Grátis';
+        
+        // [NOVO] Pega o nome do motorista
+        const nomeMotorista = rota.profiles?.full_name || 'Motorista';
+
+        // [NOVO] Adiciona o botão de deletar se for o dono
+        let deleteButtonHTML = '';
+        if (rota.usuario_id === loggedInUserId) {
+            deleteButtonHTML = `<button class="btn-delete-post" title="Excluir rota"><i class="bi bi-trash3-fill"></i></button>`;
+        }
+
         return `
         <div class="card-viagem trip-card" data-rota-id="${rota.id}">
+            ${deleteButtonHTML} 
             <div class="trip-header">
                 <div class="trip-date-time">
                     <i class="bi bi-calendar-event"></i>
@@ -533,9 +644,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             <div class="trip-footer">
-                <div class="trip-cost">
-                    <i class="bi bi-cash-coin"></i>
-                    <span>Contribuição: <strong>${custo}</strong></span>
+                <div class="trip-participant-stack">
+                    <div class="trip-participant">
+                        <div class="participant-avatar">${getInitials(nomeMotorista)}</div>
+                        <span>Motorista: <strong>${nomeMotorista}</strong></span>
+                    </div>
+                    <div class="trip-cost">
+                        <i class="bi bi-cash-coin"></i>
+                        <span>Contribuição: <strong>${custo}</strong></span>
+                    </div>
                 </div>
                 <button class="btn btn-action btn-details btn-pedir-carona" data-user-id="${rota.usuario_id}">
                     <i class="bi bi-hand-index-thumb"></i> Pedir Carona (Chat)
@@ -546,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- Listeners da página "Caronas" (Abas e Botões) ---
-    document.getElementById('page-viagens').addEventListener('click', e => {
+    document.getElementById('page-viagens').addEventListener('click', async (e) => { // [MODIFICADO] Adicionado 'async'
         // Botão de filtrar (aba Ofertas)
         if (e.target.id === 'btnBuscarCaronas' || e.target.closest('#btnBuscarCaronas')) {
             carregarCaronasDisponiveis();
@@ -556,12 +673,41 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.matches('#viagensTabs .nav-link')) {
             setTimeout(carregarConteudoAbaViagens, 50);
         }
-        // Botão de iniciar chat (em qualquer card)
+        // [MODIFICADO] Botão de iniciar chat
         const chatButton = e.target.closest('.btn-oferecer-carona, .btn-pedir-carona');
         if (chatButton) {
             const targetUserId = chatButton.dataset.userId;
-            alert(`Iniciando chat com o usuário (ID: ${targetUserId})... (Próxima etapa!)`);
-            // Aqui chamaremos a função para abrir o chat
+            console.log(`Iniciando chat com o usuário (ID: ${targetUserId})...`);
+            
+            // Encontra e "clica" no botão do chat na sidebar/nav-mobile
+            const chatNavBtn = document.querySelector('.nav-btn[data-target="page-chat"]');
+            if (chatNavBtn) {
+                chatNavBtn.click(); // Isso vai chamar o showPage('page-chat') e ativar a aba
+            }
+            
+            // No futuro, aqui também passaremos o ID do usuário para o chat
+            // ex: loadChatConversation(targetUserId);
+        }
+
+        // [NOVO] Botão de deletar post
+        const deleteButton = e.target.closest('.btn-delete-post');
+        if (deleteButton) {
+            const card = deleteButton.closest('.card-viagem');
+            const rotaId = card.dataset.rotaId;
+            const pedidoId = card.dataset.pedidoId;
+
+            if (confirm('Tem certeza que deseja excluir esta publicação?')) {
+                try {
+                    if (rotaId) {
+                        await deletarRota(rotaId);
+                    } else if (pedidoId) {
+                        await deletarPedido(pedidoId);
+                    }
+                    card.remove(); // Remove o card da tela
+                } catch (error) {
+                    alert('Erro ao excluir: ' + error.message);
+                }
+            }
         }
     });
     // =============================================
@@ -665,4 +811,196 @@ document.addEventListener('DOMContentLoaded', () => {
             panicModal.style.display = 'none';
         });
     }
+
+    // =============================================
+    // LÓGICA DO CHAT (COPIADO DE chat.html)
+    // =============================================
+    
+    const sendButton = document.getElementById('sendButton');
+    const messageInput = document.getElementById('messageInput');
+    const chatBackButton = document.getElementById('chatBackButton');
+
+    // Clica no botão "Voltar" do chat
+    if (chatBackButton) {
+        chatBackButton.addEventListener('click', () => {
+            // Volta para a página de Caronas
+            const caronasNavBtn = document.querySelector('.nav-btn[data-target="page-viagens"]');
+            if (caronasNavBtn) {
+                caronasNavBtn.click();
+            }
+        });
+    }
+
+    // Clica no botão "Enviar"
+    if (sendButton) {
+        sendButton.addEventListener('click', sendMessage);
+    }
+
+    // Pressiona Enter no input
+    if (messageInput) {
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    }
+
+    // Função para enviar mensagem
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        if (!input) return;
+        const message = input.value.trim();
+
+        if (message === '') {
+            return;
+        }
+        
+        // Adicionar mensagem ao chat (simulação)
+        addMessage(message, 'sent');
+
+        // Limpar input
+        input.value = '';
+
+        // Simulação de resposta
+        setTimeout(() => {
+            addMessage("Recebido! Estou a caminho.", 'received');
+        }, 1500);
+    }
+
+    // Função para adicionar mensagem ao chat
+    function addMessage(text, type) {
+        const chatBody = document.getElementById('chatBody');
+        if (!chatBody) return;
+        
+        const now = new Date();
+        const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                     now.getMinutes().toString().padStart(2, '0');
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+        messageDiv.innerHTML = `
+            <div>
+                <div class="message-bubble">${escapeHtml(text)}</div>
+                <div class="message-time">${time}</div>
+            </div>
+        `;
+
+        chatBody.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // Função para escapar HTML (prevenir XSS)
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Função para rolar até o final do chat
+    function scrollToBottom() {
+        const chatBody = document.getElementById('chatBody');
+        if (chatBody) {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    }
+    
+    // [NOVO] Listener global para os botões do pop-up do mapa
+    document.addEventListener('click', (e) => {
+        // Verifica se o clique foi em um botão de ação do pop-up
+        if (e.target.matches('.btn-popup-action')) {
+            const action = e.target.dataset.action;
+            const name = e.target.dataset.name;
+            
+            // Define qual input deve ser preenchido
+            const targetInputId = (action === 'partida') ? 'inputPartida' : 'inputDestino';
+            
+            // Prepara os dados
+            const prefillData = {
+                targetInput: targetInputId,
+                name: name
+            };
+
+            // Encontra e "clica" no botão da sidebar "Caronas"
+            const caronasNavBtn = document.querySelector('.nav-btn[data-target="page-viagens"]');
+            if (caronasNavBtn) {
+                caronasNavBtn.click();
+            }
+            
+            // Chama a showPage com os dados para preenchimento
+            // Usamos um setTimeout para dar tempo da aba trocar
+            setTimeout(() => {
+                showPage('page-viagens', prefillData);
+            }, 50);
+        }
+    });
+
+    // [NOVO] Listener para o botão "Usar minha localização"
+    const btnUseGPS = document.getElementById('use-gps-partida');
+    if (btnUseGPS) {
+        btnUseGPS.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert("Geolocalização não é suportada pelo seu navegador.");
+                return;
+            }
+
+            btnUseGPS.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Buscando...';
+            btnUseGPS.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const coords = [position.coords.longitude, position.coords.latitude];
+                const address = await getAddressFromCoords(coords);
+                
+                if (address) {
+                    document.getElementById('inputPartida').value = address;
+                } else {
+                    alert("Não foi possível encontrar o endereço da sua localização.");
+                }
+                
+                btnUseGPS.innerHTML = '<i class="bi bi-geo-fill"></i> Usar minha localização';
+                btnUseGPS.disabled = false;
+
+            }, (error) => {
+                console.error("Erro ao obter localização:", error);
+                alert("Erro ao obter sua localização. Verifique se a permissão de GPS está ativa.");
+                btnUseGPS.innerHTML = '<i class="bi bi-geo-fill"></i> Usar minha localização';
+                btnUseGPS.disabled = false;
+            });
+        });
+    }
+
+    // [NOVO] Listener para o botão "Usar minha localização" do MOTORISTA
+    const btnUseGPSMotorista = document.getElementById('use-gps-partida-motorista');
+    if (btnUseGPSMotorista) {
+        btnUseGPSMotorista.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert("Geolocalização não é suportada pelo seu navegador.");
+                return;
+            }
+
+            btnUseGPSMotorista.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Buscando...';
+            btnUseGPSMotorista.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const coords = [position.coords.longitude, position.coords.latitude];
+                const address = await getAddressFromCoords(coords);
+                
+                if (address) {
+                    document.getElementById('inputPartidaMotorista').value = address;
+                } else {
+                    alert("Não foi possível encontrar o endereço da sua localização.");
+                }
+                
+                btnUseGPSMotorista.innerHTML = '<i class="bi bi-geo-fill"></i> Usar minha localização';
+                btnUseGPSMotorista.disabled = false;
+
+            }, (error) => {
+                console.error("Erro ao obter localização:", error);
+                alert("Erro ao obter sua localização. Verifique se a permissão de GPS está ativa.");
+                btnUseGPSMotorista.innerHTML = '<i class="bi bi-geo-fill"></i> Usar minha localização';
+                btnUseGPSMotorista.disabled = false;
+            });
+        });
+    }
+
+
 }); // Fim do DOMContentLoaded

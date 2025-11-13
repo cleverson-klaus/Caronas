@@ -501,6 +501,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('caronas-list-container');
         const loading = document.getElementById('caronas-loading');
         
+        const { data: { user } } = await supabase.auth.getUser(); // [NOVO] Pega o usuário logado
+        
         const inputOrigem = document.getElementById('filtroOrigem');
         const inputDestino = document.getElementById('filtroDestino');
         if (!container || !loading || !inputOrigem || !inputDestino) return; 
@@ -517,7 +519,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.innerHTML = `<div class="card-viagem empty-state"><i class="bi bi-compass"></i><h3>Nenhuma carona OFERECIDA encontrada</h3><p>Tente ajustar seus filtros ou volte mais tarde.</p></div>`;
             } else {
                 rotas.forEach(rota => {
-                    container.insertAdjacentHTML('beforeend', criarCardCarona(rota));
+                    // [MODIFICADO] Passa o ID do usuário logado
+                    container.insertAdjacentHTML('beforeend', criarCardCarona(rota, user?.id));
                 });
             }
         } catch (error) {

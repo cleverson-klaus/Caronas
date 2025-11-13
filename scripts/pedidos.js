@@ -50,3 +50,24 @@ export async function buscarPedidos() {
     if (error) throw error;
     return data;
 }
+
+/**
+ * Deleta um pedido de carona.
+ * @param {string} id O ID do pedido a ser deletado.
+ */
+export async function deletarPedido(id) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Usuário não autenticado.');
+
+    const { error } = await supabase
+        .from('pedidos_carona')
+        .delete()
+        .eq('id', id)
+        .eq('usuario_id', user.id); // Garante que só pode deletar o seu
+
+    if (error) {
+        console.error('Erro ao deletar pedido:', error);
+        throw error;
+    }
+    return true;
+}

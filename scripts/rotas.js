@@ -41,7 +41,15 @@ export async function criarRota({
  * @returns {Promise<Array>} Uma lista de rotas encontradas.
  */
 export async function buscarRotas({ origemCidade = null, destinoCidade = null, limit = 50 }) {
-  let query = supabase.from('rotas').select('*');
+  let query = supabase
+    .from('rotas')
+    .select(`
+        *,
+        profiles:usuario_id (
+            full_name,
+            gender
+        )
+    `);
 
   if (origemCidade) query = query.ilike('cidade_origem', `%${origemCidade}%`);
   if (destinoCidade) query = query.ilike('cidade_destino', `%${destinoCidade}%`);
@@ -83,4 +91,25 @@ export async function traçarESalvarRota({
         console.error('Erro ao traçar e salvar rota:', err);
         throw err;
     }
+}
+
+/**
+ * Deleta uma rota (oferta) de carona.
+ * @param {string} id O ID da rota a ser deletada.
+ */
+export async function deletarRota(id) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Usuário não autenticado.');
+
+    const { error } = await supabase
+        .from('rotas')
+        .delete()
+        .eq('id', id)
+        .eq('usuario_id', user.id); // Garante que só pode deletar a sua
+
+    if (error) {
+        console.error('Erro ao deletar rota:', error);
+        throw error;
+    }
+    return true;
 }

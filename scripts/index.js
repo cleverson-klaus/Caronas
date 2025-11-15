@@ -134,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobileLoginNavBtn = document.getElementById('mobile-login-nav-btn');
         const mobileProfileBtn = document.getElementById('mobile-profile-sidebar-btn');
         const mobileProfileInitials = document.getElementById('mobile-profile-initials');
+        const mobileNavLogo = document.getElementById('mobile-nav-logo'); // [NOVO]
         
         // Seletor do formulário de carona (para filtro de gênero)
         const preferenciaGeneroContainer = document.getElementById('preferencia-genero-container');
@@ -148,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (profileInitials) profileInitials.textContent = userInitials;
             if (profileName) profileName.textContent = userName.split(' ')[0];
             // UI Mobile
+            if (mobileNavLogo) mobileNavLogo.style.display = 'flex'; // [NOVO] Mostra a logo
             if (mobileLoginNavBtn) mobileLoginNavBtn.style.display = 'none';
             if (mobileProfileBtn) mobileProfileBtn.style.display = 'flex';
             if (mobileProfileInitials) mobileProfileInitials.textContent = userInitials;
@@ -166,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (profileBtn) profileBtn.style.display = 'none';
             
             // UI Mobile
+            if (mobileNavLogo) mobileNavLogo.style.display = 'none'; // [NOVO] Esconde a logo
             if (mobileLoginNavBtn) mobileLoginNavBtn.style.display = 'flex';
             if (mobileProfileBtn) mobileProfileBtn.style.display = 'none';
             

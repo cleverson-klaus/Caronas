@@ -277,7 +277,11 @@
 
     </div>
     <nav class="sidebar-mobile-bottom" id="mobile-nav">
-        <button class="nav-btn active" data-target="page-mapa" title="Mapa">
+        <div class="nav-logo-mobile" id="mobile-nav-logo" style="display: none;">
+            <img src="./assets/img/gouni-logo.png" alt="Logo GoUni">
+        </div>
+
+        <button class="nav-btn" data-target="page-mapa" title="Mapa">
             <i class="bi bi-map-fill"></i>
             <span>Mapa</span>
         </button>
@@ -300,6 +304,10 @@
                 <span id="mobile-profile-initials"></span>
             </div>
         </button>
+
+        <button class="sos-button-mobile" id="mobile-sos-btn" title="Botão do Pânico">
+            <i class="bi bi-shield-fill-exclamation"></i>
+            <span>SOS</span> </button>
     </nav>
     
     <div class="profile-menu mobile-profile-menu" id="mobile-profile-menu">
@@ -311,9 +319,6 @@
         </button>
     </div>
 
-    <button class="sos-button-mobile" id="mobile-sos-btn" title="Botão do Pânico">
-        <i class="bi bi-shield-fill-exclamation"></i>
-    </button>
     <!-- [CORRIGIDO] Trocado para CDN para evitar erro 404 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     

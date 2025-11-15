@@ -18,16 +18,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const allPages = document.querySelectorAll('.page');
     const desktopNavButtons = document.querySelectorAll('.sidebar-desktop .nav-btn');
     const mobileNavButtons = document.querySelectorAll('#mobile-nav .nav-btn');
+    
+    // [NOVO] Seletores para o menu móvel e SOS
+    const mobileNav = document.getElementById('mobile-nav');
+    const mobileSosBtn = document.getElementById('mobile-sos-btn');
+
     // [MODIFICADO] Adicionamos um parâmetro 'prefillData'
     function showPage(pageId, prefillData = null) {
         allPages.forEach(page => {
             page.style.display = 'none';
         });
+
         const targetPage = document.getElementById(pageId);
         if (targetPage) {
             targetPage.style.display = 'flex'; // Usamos 'flex' para todos os containers
         }
         
+        // [MODIFICADO] Controla a visibilidade do menu móvel
+        if (pageId === 'page-login' || pageId === 'page-cadastro') {
+            // Esconde o menu e o SOS no login/cadastro
+            if (mobileNav) mobileNav.style.display = 'none';
+            if (mobileSosBtn) mobileSosBtn.style.display = 'none';
+        } else {
+            // Mostra o menu e o SOS nas outras páginas (no mobile)
+            if (mobileNav) mobileNav.style.display = 'flex';
+            if (mobileSosBtn) mobileSosBtn.style.display = 'flex';
+        }
+
         // Inicializa ou redimensiona o mapa apenas se a página do mapa for exibida
         if (pageId === 'page-mapa') {
             if (!map) { 
